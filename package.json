@@ -274,6 +274,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@hot-loader/react-dom": "^16.13.0",
+    "@types/moment": "^2.13.0",
     "connected-react-router": "^6.8.0",
     "core-js": "^3.6.5",
     "devtron": "^1.4.0",
@@ -281,6 +282,7 @@
     "electron-log": "^4.0.6",
     "electron-updater": "^4.2.0",
     "history": "^4.10.1",
+    "moment": "^2.25.3",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-hot-loader": "^4.12.19",

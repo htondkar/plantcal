@@ -1,13 +1,15 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import routes from '../constants/routes.json';
+import React, { useState } from 'react';
 import styles from './Home.css';
+import { InputForm } from './InputForm/InputForm';
+import { Results } from './Results/Resutls';
 
 export default function Home() {
+  const [baseDate, setBaseDate] = useState<Date | null>(null);
+
   return (
     <div className={styles.container} data-tid="container">
-      <h2>Home</h2>
-      <Link to={routes.COUNTER}>to Counter</Link>
+      <InputForm onSubmit={({ date }) => setBaseDate(date)} />
+      {baseDate && <Results baseDate={baseDate} />}
     </div>
   );
 }
