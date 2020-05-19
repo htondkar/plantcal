@@ -2,9 +2,11 @@
   * {
     font-size: 20px;
   }
-  display: grid;
-  grid-template-columns: 300px auto;
-  justify-content: start;
-  grid-gap: 15px;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+
+  label {
+    margin: 5px;
+  }
 }

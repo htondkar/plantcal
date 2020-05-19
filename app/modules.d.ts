@@ -1,4 +1,13 @@
 declare module 'swisseph' {
+  export type CalculationResult = {
+    distance: number;
+    distanceSpeed: number;
+    latitude: number;
+    latitudeSpeed: number;
+    longitude: number;
+    longitudeSpeed: number;
+    rflag: number;
+  };
   const exported = {
     SEFLG_ASTROMETRIC: 1536,
     SEFLG_BARYCTR: 16384,
@@ -226,7 +235,8 @@ declare module 'swisseph' {
     swe_azalt: () => any,
     swe_azalt_rev: () => any,
     swe_calc: () => any,
-    swe_calc_ut: () => any,
+    swe_calc_ut: (julianDate, planetCode: number, flag, callaback) =>
+      CalculationResult,
     swe_close: () => any,
     swe_cotrans: () => any,
     swe_cotrans_sp: () => any,
@@ -275,7 +285,7 @@ declare module 'swisseph' {
       day: number,
       hour: number,
       calendar: number,
-      callback: (result: any) => void,
+      callback: (result: any) => void
     ) => any,
     swe_lun_eclipse_how: () => any,
     swe_lun_eclipse_when: () => any,
