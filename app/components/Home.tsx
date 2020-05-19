@@ -1,37 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Home.css';
+import React, { useState } from 'react';
 import { InputForm } from './InputForm/InputForm';
 import { Results } from './Results/Resutls';
-import { Model } from '../domain/model';
+import { Model, Bodies, Aspect } from '../domain/model';
+
+import styles from './Home.scss';
 
 const ephemerisModel = new Model();
 
-export default function Home() {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [results, setResults] = useState<any>(null);
+export interface TransitToNatalAspect {
+  date: Date;
+  importantAnglesOfTheDay: Record<
+    Bodies,
+    { aspect: Aspect; actualAngle: number }
+  >;
+}
 
-  useEffect(() => {
+export default function Home() {
+  const [results, setResults] = useState<TransitToNatalAspect[]>([]);
+
+  function handleSubmit({
+    startDate,
+    endDate
+  }: {
+    startDate: Date;
+    endDate: Date;
+  }) {
     if (startDate && endDate) {
       ephemerisModel
         .calculateImportantDates(startDate, endDate)
-        .then(console.log);
+        .then(setResults);
     }
-  }, [startDate, endDate]);
-
-  if (results) {
-    console.log(results);
   }
 
   return (
     <div className={styles.container} data-tid="container">
-      <InputForm
-        onSubmit={({ startDate, endDate }) => {
-          setStartDate(startDate);
-          setEndDate(endDate);
-        }}
-      />
-      {startDate && <Results baseDate={startDate} />}
+      <InputForm onSubmit={handleSubmit} />
+      {results && <Results content={results} />}
     </div>
   );
 }

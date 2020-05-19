@@ -2,11 +2,8 @@
   * {
     font-size: 20px;
   }
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  label {
-    margin: 5px;
-  }
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: 300px 300px 120px;
+  align-items: stretch;
 }

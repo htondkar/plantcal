@@ -1,13 +1,46 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import React from 'react';
 
 import styles from './styles.scss';
+import { TransitToNatalAspect } from '../Home';
 
 interface Props {
-  baseDate: Date;
+  content: TransitToNatalAspect[];
 }
 
-export const Results: React.FunctionComponent<Props> = ({ baseDate }) => {
+function formatDate(date: Date) {
+  const year = new Intl.DateTimeFormat('en', {
+    year: 'numeric'
+  }).format(date);
+  const month = new Intl.DateTimeFormat('en', {
+    month: '2-digit'
+  }).format(date);
+  const day = new Intl.DateTimeFormat('en', {
+    day: '2-digit'
+  }).format(date);
+  return `${day}-${month}-${year}`;
+}
 
-  return <section className={styles.root}>Root</section>;
+export const Results: React.FunctionComponent<Props> = ({ content }) => {
+  return (
+    <section className={styles.root}>
+      <table>
+        <tbody>
+          {content.map(({ date, importantAnglesOfTheDay }) => {
+            return (
+              <tr>
+                <td>{formatDate(date)}</td>
+                <td>
+                  {Object.entries(importantAnglesOfTheDay).map(
+                    ([planet, { aspect }]) => (
+                      <span>{`Sun ${aspect} natal ${planet}`} </span>
+                    )
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+  );
 };

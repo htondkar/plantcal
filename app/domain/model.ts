@@ -1,8 +1,8 @@
 import swisseph, { CalculationResult } from 'swisseph';
 import moment from 'moment';
 
-type Aspect = 'conjunction' | 'opposition' | 'trine' | 'square';
-type Bodies =
+export type Aspect = 'conjunction' | 'opposition' | 'trine' | 'square';
+export type Bodies =
   | 'sun'
   | 'moon'
   | 'mercury'
