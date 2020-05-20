@@ -25,14 +25,24 @@ export const Results: React.FunctionComponent<Props> = ({ content }) => {
     <section className={styles.root}>
       <table>
         <tbody>
-          {content.map(({ date, importantAnglesOfTheDay }) => {
+          {content.map(({ date, importantAnglesOfTheDay }, index) => {
             return (
-              <tr>
+              <tr key={`${date}-${index}`}>
                 <td>{formatDate(date)}</td>
                 <td>
                   {Object.entries(importantAnglesOfTheDay).map(
                     ([planet, { aspect }]) => (
-                      <span>{`Sun ${aspect} natal ${planet}`} </span>
+                      <span
+                        className={
+                          aspect === 'conjunction'
+                            ? 'strong'
+                            : aspect === 'opposition'
+                            ? 'medium'
+                            : 'weak'
+                        }
+                      >
+                        {`Sun ${aspect} natal ${planet}`}{' '}
+                      </span>
                     )
                   )}
                 </td>

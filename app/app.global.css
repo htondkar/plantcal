@@ -16,7 +16,6 @@ body {
   height: 100vh;
   background-color: #232c39;
   font-family: Arial, Helvetica, Helvetica Neue, serif;
-  overflow-y: hidden;
 }
 
 h2 {
@@ -45,4 +44,13 @@ a:hover {
   opacity: 1;
   text-decoration: none;
   cursor: pointer;
+}
+
+.weak {
+  color: grey;
+}
+
+.strong {
+  color: cyan;
+  font-weight: 600;
 }
