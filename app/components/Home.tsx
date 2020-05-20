@@ -7,13 +7,16 @@ import styles from './Home.scss';
 
 const ephemerisModel = new Model();
 
-export interface TransitToNatalAspect {
+export type TransitToNatalAspect = {
   date: Date;
-  importantAnglesOfTheDay: Record<
-    Bodies,
-    { aspect: Aspect; actualAngle: number }
-  >;
-}
+} & Partial<
+  {
+    [key in 'sun' | 'mars' | 'jupiter' | 'saturn']: Record<
+      Bodies,
+      { aspect: Aspect; actualAngle: number }
+    >;
+  }
+>;
 
 export default function Home() {
   const [results, setResults] = useState<TransitToNatalAspect[]>([]);

@@ -25,25 +25,22 @@ export const Results: React.FunctionComponent<Props> = ({ content }) => {
     <section className={styles.root}>
       <table>
         <tbody>
-          {content.map(({ date, importantAnglesOfTheDay }, index) => {
+          {content.map(({ date, ...rest }, index) => {
             return (
               <tr key={`${date}-${index}`}>
                 <td>{formatDate(date)}</td>
                 <td>
-                  {Object.entries(importantAnglesOfTheDay).map(
-                    ([planet, { aspect }]) => (
-                      <span
-                        className={
-                          aspect === 'conjunction'
-                            ? 'strong'
-                            : aspect === 'opposition'
-                            ? 'medium'
-                            : 'weak'
-                        }
-                      >
-                        {`Sun ${aspect} natal ${planet}`}{' '}
-                      </span>
-                    )
+                  {Object.entries(rest).flatMap(([planet, aspects]) =>
+                    Object.entries(
+                      aspects
+                    ).map(([natalPlanet, { aspect }], index) => (
+                      <Aspect
+                        key={index}
+                        aspect={aspect}
+                        transitPlanet={planet}
+                        natalPlanet={natalPlanet}
+                      ></Aspect>
+                    ))
                   )}
                 </td>
               </tr>
@@ -54,3 +51,17 @@ export const Results: React.FunctionComponent<Props> = ({ content }) => {
     </section>
   );
 };
+
+const Aspect = ({ aspect, transitPlanet, natalPlanet }) => (
+  <span
+    className={
+      aspect === 'conjunction'
+        ? 'strong'
+        : aspect === 'opposition'
+        ? 'medium'
+        : 'weak'
+    }
+  >
+    {`${transitPlanet} ${aspect} natal ${natalPlanet}`}{' '}
+  </span>
+);

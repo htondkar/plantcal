@@ -1,5 +1,6 @@
 import swisseph, { CalculationResult } from 'swisseph';
 import moment from 'moment';
+import { TransitToNatalAspect } from '../components/Home';
 
 export type Aspect = 'conjunction' | 'opposition' | 'trine' | 'square';
 export type Bodies =
@@ -32,16 +33,16 @@ export class Model {
     swisseph.SE_TRUE_NODE
   ];
 
-  // private orbs: Record<Bodies, number> = {
-  //   sun: 0.5,
-  //   mars: 0.3,
-  //   jupiter: 0.07,
-  //   saturn: 0.05,
-  //   uranus: 0.03,
-  //   neptune: 0.01,
-  //   pluto: 0.01,
-  //   node: 0.2
-  // };
+  private orbs: Record<Bodies, number> = {
+    sun: 0.5,
+    mars: 0.3,
+    jupiter: 0.07,
+    saturn: 0.05,
+    uranus: 0.03,
+    neptune: 0.01,
+    pluto: 0.01,
+    node: 0.05
+  };
 
   constructor(private readonly flag: number = swisseph.SEFLG_SPEED) {}
 
@@ -51,22 +52,50 @@ export class Model {
     const lastMoment = moment(to);
     const differenceInDays = lastMoment.diff(initialMoment, 'day');
 
-    const results = [];
+    const results: TransitToNatalAspect[] = [];
 
     for (let index = 0; index < differenceInDays; index++) {
       initialMoment.add(1, 'day');
 
-      const importantAnglesOfTheDay = this.findImportantAspectsBetweenNatalPlanetsAndTransitSun(
+      const importantSunAnglesOfTheDay = this.findImportantAspectsBetweenNatalPlanetsAndTransitSun(
         natalPositions,
         await this.getPlanetPosition(swisseph.SE_SUN, initialMoment.toDate())
       );
 
-      if (Object.keys(importantAnglesOfTheDay).length > 0) {
-        results.push({
-          date: initialMoment.toDate(),
-          importantAnglesOfTheDay
-        });
-      }
+      const importantMarsAnglesOfTheDay = this.findImportantAspectsBetweenNatalPlanetsAndTransitSun(
+        natalPositions,
+        await this.getPlanetPosition(swisseph.SE_MARS, initialMoment.toDate())
+      );
+
+      const importantJupiterAnglesOfTheDay = this.findImportantAspectsBetweenNatalPlanetsAndTransitSun(
+        natalPositions,
+        await this.getPlanetPosition(
+          swisseph.SE_JUPITER,
+          initialMoment.toDate()
+        )
+      );
+
+      const importantSaturnAnglesOfTheDay = this.findImportantAspectsBetweenNatalPlanetsAndTransitSun(
+        natalPositions,
+        await this.getPlanetPosition(swisseph.SE_SATURN, initialMoment.toDate())
+      );
+
+      const pushStuffIfNotEmpty = (
+        planet: Bodies,
+        anglesOfTheDay: Record<Bodies, { aspect: Aspect; actualAngle: number }>
+      ) => {
+        if (Object.keys(anglesOfTheDay).length > 0) {
+          results.push({
+            date: initialMoment.toDate(),
+            [planet]: anglesOfTheDay
+          });
+        }
+      };
+
+      pushStuffIfNotEmpty('sun', importantSunAnglesOfTheDay);
+      pushStuffIfNotEmpty('mars', importantMarsAnglesOfTheDay);
+      pushStuffIfNotEmpty('jupiter', importantJupiterAnglesOfTheDay);
+      pushStuffIfNotEmpty('saturn', importantSaturnAnglesOfTheDay);
     }
 
     return results;
@@ -126,7 +155,13 @@ export class Model {
         const natalPlanetLongitude = natalPositions[planet].longitude;
         const currentSunLongitude = sunPosition.longitude;
 
-        if (this.isConjunction(natalPlanetLongitude, currentSunLongitude)) {
+        if (
+          this.isConjunction(
+            natalPlanetLongitude,
+            currentSunLongitude,
+            this.orbs[planet]
+          )
+        ) {
           result[planet] = {
             aspect: 'conjunction',
             actualAngle: Math.abs(currentSunLongitude - natalPlanetLongitude)
@@ -135,7 +170,13 @@ export class Model {
           continue;
         }
 
-        if (this.isOpposition(natalPlanetLongitude, currentSunLongitude)) {
+        if (
+          this.isOpposition(
+            natalPlanetLongitude,
+            currentSunLongitude,
+            this.orbs[planet]
+          )
+        ) {
           result[planet] = {
             aspect: 'opposition',
             actualAngle: Math.abs(currentSunLongitude - natalPlanetLongitude)
@@ -144,7 +185,13 @@ export class Model {
           continue;
         }
 
-        if (this.isSquare(natalPlanetLongitude, currentSunLongitude)) {
+        if (
+          this.isSquare(
+            natalPlanetLongitude,
+            currentSunLongitude,
+            this.orbs[planet]
+          )
+        ) {
           result[planet] = {
             aspect: 'square',
             actualAngle: Math.abs(currentSunLongitude - natalPlanetLongitude)
@@ -153,7 +200,13 @@ export class Model {
           continue;
         }
 
-        if (this.isTrine(natalPlanetLongitude, currentSunLongitude)) {
+        if (
+          this.isTrine(
+            natalPlanetLongitude,
+            currentSunLongitude,
+            this.orbs[planet]
+          )
+        ) {
           result[planet] = {
             aspect: 'trine',
             actualAngle: Math.abs(currentSunLongitude - natalPlanetLongitude)
