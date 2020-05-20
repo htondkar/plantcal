@@ -15,7 +15,10 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@types/chart.js": "^2.9.21",
+    "@types/chartjs": "^0.0.31",
     "@types/moment": "^2.13.0",
+    "chart.js": "^2.9.3",
     "moment": "^2.25.3",
     "swisseph": "^0.5.13"
   }
