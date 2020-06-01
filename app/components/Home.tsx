@@ -4,8 +4,10 @@ import { Results } from './Results/Resutls';
 import { Model, Bodies, Aspect } from '../domain/model';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import styles from './Home.scss';
 import { Chart } from './Chart/Chart';
+import { PositionsTable } from './PositionsTable/PositionsTable';
+
+import styles from './Home.scss';
 
 const ephemerisModel = new Model();
 
@@ -20,10 +22,15 @@ export type TransitToNatalAspect = {
   }
 >;
 
+export type PositionWithDate = {
+  date: Date;
+} & Position;
+
 export default function Home() {
   const [results, setResults] = useState<TransitToNatalAspect[]>([]);
   const [results2, setResults2] = useState<TransitToNatalAspect[]>([]);
   const [results3, setResults3] = useState<TransitToNatalAspect[]>([]);
+  const [positions, setPositions] = useState<PositionWithDate[]>([]);
 
   async function handleSubmit({
     startDate,
@@ -65,24 +72,47 @@ export default function Home() {
     }
   }
 
+  async function handleLatitudes({ startDate, endDate }: FormValues) {
+    const results = await ephemerisModel.getPlanetsPositionOverTimeSpan(
+      startDate,
+      endDate
+    );
+
+    setPositions(results);
+  }
+
   return (
     <div className={styles.container} data-tid="container">
-      <InputForm onSubmit={handleSubmit} />
       <Tabs>
         <TabList>
-          <Tab>Table View</Tab>
-          <Tab>Chart</Tab>
+          <Tab>Aspects</Tab>
+          <Tab>Latitudes</Tab>
         </TabList>
 
         <TabPanel>
-          <div className={styles.resultsWrapper}>
-            <Results content={results} />
-            <Results content={results2} />
-            <Results content={results3} />
-          </div>
+          <InputForm onSubmit={handleSubmit} />
+          <Tabs>
+            <TabList>
+              <Tab>Table View</Tab>
+              <Tab>Chart</Tab>
+            </TabList>
+
+            <TabPanel>
+              <div className={styles.resultsWrapper}>
+                <Results content={results} />
+                <Results content={results2} />
+                <Results content={results3} />
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <Chart />
+            </TabPanel>
+          </Tabs>
         </TabPanel>
+
         <TabPanel>
-          <Chart />
+          <InputForm onSubmit={handleLatitudes} />
+          <PositionsTable results={positions} />
         </TabPanel>
       </Tabs>
     </div>

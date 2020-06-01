@@ -16,10 +16,10 @@ export type Bodies =
   | 'pluto'
   | 'node';
 
-type Result = Record<Bodies, CalculationResult>;
+export type Position = Record<Bodies, CalculationResult>;
 
 export class Model {
-  private studiedPlanets: number[] = [
+  studiedPlanets: number[] = [
     swisseph.SE_SUN,
     swisseph.SE_MOON,
     swisseph.SE_MERCURY,
@@ -101,7 +101,7 @@ export class Model {
     return results;
   }
 
-  async getPlanetsPositions(date: Date): Promise<Result> {
+  async getPlanetsPositions(date: Date): Promise<Position> {
     const results = await Promise.all(
       this.studiedPlanets.map(planetCode =>
         this.getPlanetPosition(planetCode, date)
@@ -144,8 +144,24 @@ export class Model {
     });
   }
 
+  async getPlanetsPositionOverTimeSpan(startDate: Date, endDate: Date) {
+    const initialMoment = moment(startDate);
+    const lastMoment = moment(endDate);
+    const differenceInDays = lastMoment.diff(initialMoment, 'day');
+
+    const positionsPromiseArray = [];
+
+    for (let index = 0; index < differenceInDays; index++) {
+      const result = await this.getPlanetsPositions(initialMoment.toDate());
+      positionsPromiseArray.push({ ...result, date: initialMoment.toDate() });
+      initialMoment.add(1, 'day');
+    }
+
+    return positionsPromiseArray;
+  }
+
   private findImportantAspectsBetweenNatalPlanetsAndTransitSun(
-    natalPositions: Result,
+    natalPositions: Position,
     sunPosition: CalculationResult
   ) {
     const result: Record<string, { aspect: Aspect; actualAngle: number }> = {};
